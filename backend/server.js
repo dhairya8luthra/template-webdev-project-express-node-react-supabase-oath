@@ -3,7 +3,7 @@ import pingRoute from './routes/ping.js';
 import pingSupabaseRoute from './routes/ping_supabase.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
+import { verifySupabaseToken } from './middleware/authMiddleware.js';
 const app = express();
 
 
@@ -18,6 +18,11 @@ app.use(express.json()); // for JSON request bodies
 
 app.use('/api', pingRoute);
 app.use('/api', pingSupabaseRoute);
+
+// Protected API route
+app.get('/api/protected', verifySupabaseToken, (req, res) => {
+  res.json({ message: `Hello ${req.user.email}` });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
